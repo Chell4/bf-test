@@ -1,0 +1,3 @@
+fn shmain() {
+    println!("aaaaa");    
+}
