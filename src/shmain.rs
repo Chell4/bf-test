@@ -1,3 +1,3 @@
-fn shmain() {
+pub fn shmain() {
     println!("aaaaa");    
 }
