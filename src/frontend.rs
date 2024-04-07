@@ -1,10 +1,21 @@
-pub mod lexer;
-pub mod parser;
+mod lexer;
+mod parser;
 
-enum FrontendError {
-    ParsingError(parser::ParsingError)
+pub use lexer::{
+    Token,
+    pre_process,
+    lex_analyze,
+};
+pub use parser::{
+    Operation,
+    ParsingError,
+    parse,
+};
+
+pub enum FrontendError {
+    ParsingError(ParsingError)
 }
 
-pub fn analyze(source: String) -> Result<Vec<parser::Operation>, FrontendError> {
-    parser::parse(lexer::lex_analyze(lexer::pre_process(source))).map_err(FrontendError::ParsingError) // lol xD (todo)
+pub fn analyze(source: String) -> Result<Vec<Operation>, FrontendError> {
+    parse(lex_analyze(pre_process(source))).map_err(FrontendError::ParsingError) // lol xD (todo)
 }
