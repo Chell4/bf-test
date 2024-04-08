@@ -3,19 +3,23 @@ mod parser;
 
 pub use lexer::{
     Token,
+    Lexer,
+    LexerError,
     pre_process,
-    lex_analyze,
 };
 pub use parser::{
     Operation,
+    Parser,
     ParsingError,
-    parse,
 };
 
+// any error from frontend
 pub enum FrontendError {
-    ParsingError(ParsingError)
+    ParsingError(ParsingError),
+    LexerError(LexerError),
 }
 
+// source code (maybe with comments) to intermediate representation (operations) or error
 pub fn analyze(source: String) -> Result<Vec<Operation>, FrontendError> {
-    parse(lex_analyze(pre_process(source))).map_err(FrontendError::ParsingError) // lol xD (todo)
+    todo!()
 }
