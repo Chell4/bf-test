@@ -5,13 +5,5 @@ use crate::frontend::Operation;
 pub use interpreter::{
     Interpreter,
     InterpreterError,
+    interpret,
 };
-
-pub enum BackendError {
-    InterpreterError(InterpreterError)
-}
-
-// just interpret given vector of operations
-pub fn interpret(ops: Vec<Operation>) -> Option<BackendError> {
-    todo!()
-}
