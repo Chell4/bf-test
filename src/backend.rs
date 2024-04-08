@@ -1,10 +1,17 @@
-pub mod interpreter;
+mod interpreter;
 
 use crate::frontend::Operation;
 
-pub use interpreter::Interpreter;
+pub use interpreter::{
+    Interpreter,
+    InterpreterError,
+};
+
+pub enum BackendError {
+    InterpreterError(InterpreterError)
+}
 
 // just interpret given vector of operations
-pub fn interpret(ops: Vec<Operation>) -> Option<interpreter::RuntimeError> {
+pub fn interpret(ops: Vec<Operation>) -> Option<BackendError> {
     todo!()
 }

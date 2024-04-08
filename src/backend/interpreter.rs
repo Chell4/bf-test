@@ -18,8 +18,8 @@ pub struct Interpreter {
     ops_buffer: VecDeque<Operation>
 }
 
-// error in runtime
-pub enum RuntimeError {
+// error in runtime interpreter error
+pub enum InterpreterError {
     //todo
 }
 
@@ -39,11 +39,11 @@ impl Interpreter {
     }
     
     // execute and pop the first operation in the buffer
-    fn execute_next(&mut self) -> Option<RuntimeError> {
+    fn execute_next(&mut self) -> Option<InterpreterError> {
         todo!()
     }
     // execute all operations and clear the buffer
-    fn execute_all(&mut self) -> Option<RuntimeError> {
+    fn execute_all(&mut self) -> Option<InterpreterError> {
         todo!()
     }
 
