@@ -16,8 +16,9 @@ pub struct Lexer<'a> {
     str_buffer: VecDeque<&'a str>
 }
 
-pub struct LexerError {
+pub enum LexerError {
     // todo
+
 }
 
 impl<'a> Lexer<'a> {
@@ -25,37 +26,47 @@ impl<'a> Lexer<'a> {
     pub fn new() -> Lexer<'a> {
         todo!()
     }
-    
+
     // clear lexer buffer
     pub fn clear(&mut self) {
-        todo!()
+        self.clear();  //11.04
     }
-    
+
     // push string to the buffer
     pub fn push_str(&mut self, str: &'a str) {
-        todo!()
+        self.push_back(str); //11.04
     }
     // pop last pushed string
     pub fn pop_str(&mut self) {
-        todo!()
+        self.pop_back(); //11.04
     }
-    
+
     // analyze and pop oldest pushed string
     pub fn analyze_next(&mut self) -> Result<Vec<Token>, LexerError> {
-        todo!()
+        for i in self {
+            vec.push_back(self[i]);
+        }
+        self.pop(self[0]);
     }
     // analyze all buffered strings and clear the buffer
     pub fn analyze_all (&mut self) -> Result<Vec<Token>, LexerError> {
-        todo!()
+        for i in self {
+            vec.push_back(self[i]);
+        }
+        self.clear();
     }
-    
+
     // returns size of the character buffer
     pub fn buffer_size(&self) -> usize {
-        todo!()
+        self.size()
     }
 }
 
 // removes all characters except allowed
 pub fn pre_process(source: String) -> String {
-    todo!() 
+    for i in source {
+        if ((source[i] != "+") & (source[i] != "-") & (source[i] != ">") & (source[i] != "<") & (source[i] != "[") & (source[i] != "]") & (source[i] != ".") & (source[i] != ",")) {
+            source.pop(source[i]);
+        } 
+    }
 }
