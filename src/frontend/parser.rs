@@ -39,21 +39,22 @@ impl Parser {
     pub fn new() -> Parser {
         todo!()
     }
-    
+
     // clear parser buffer
     pub fn clear(&mut self) {
-        todo!()
+        self.clear();
     }
-    
+
     // push single token
     pub fn push_token(&mut self, token: &Token) {
-        todo!()
+        self.push_token(token);
     }
-    // push the slice of the tokens 
+    // push the slice of the tokens
+    //???
     pub fn push_tokens(&mut self, tokens: &[Token]) {
-        todo!()
+        self.push_tokens(tokens);
     }
-    
+
     // try to parse operation from oldest tokens
     pub fn parse_next_op(&mut self) -> Result<Operation, ParsingError> {
         todo!()
@@ -69,6 +70,12 @@ impl Parser {
 
     // return number of tokens in the buffer
     pub fn buffer_size(&self) -> usize {
-        todo!()
+        self.size()
     }
 }
+
+//??????????
+//self
+//tokens
+//error!!!
+//impl
