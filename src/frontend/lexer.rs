@@ -12,8 +12,8 @@ pub enum Token {
 }
 
 // lexical analyzer
-pub struct Lexer<'a> {
-    str_buffer: VecDeque<&'a str>
+pub struct Lexer {
+    str_buffer: VecDeque<String>
 }
 
 pub enum LexerError {
@@ -21,20 +21,22 @@ pub enum LexerError {
 
 }
 
-impl<'a> Lexer<'a> {
+impl Lexer {
     // create new lexer
-    pub fn new() -> Lexer<'a> {
-        todo!()
+    pub fn new() -> Lexer {
+        Lexer{
+            str_buffer: VecDeque::new(),
+        }
     }
 
     // clear lexer buffer
     pub fn clear(&mut self) {
-        self.clear();  //11.04
+        self.str_buffer.clear();
     }
 
     // push string to the buffer
-    pub fn push_str(&mut self, str: &'a str) {
-        self.push_back(str); //11.04
+    pub fn push_str(&mut self, str: String) {
+        self.str_buffer.push_back(str);
     }
     // pop last pushed string
     pub fn pop_str(&mut self) {
