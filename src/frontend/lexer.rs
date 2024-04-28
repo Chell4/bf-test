@@ -17,7 +17,7 @@ pub struct Lexer {
 }
 
 pub enum LexerError {
-    // todo
+    LexerIsEmpty: "Can't analyze and clear empty buffer"
 
 }
 
@@ -31,36 +31,38 @@ impl Lexer {
 
     // clear lexer buffer
     pub fn clear(&mut self) {
-        self.str_buffer.clear();
+        self.Lexer.str_buffer.clear();
     }
 
     // push string to the buffer
     pub fn push_str(&mut self, str: String) {
-        self.str_buffer.push_back(str);
+        self.Lexer.str_buffer.push_back(str);
     }
     // pop last pushed string
     pub fn pop_str(&mut self) {
-        self.pop_back(); //11.04
+        self.Lexer.pop_back();
     }
 
     // analyze and pop oldest pushed string
     pub fn analyze_next(&mut self) -> Result<Vec<Token>, LexerError> {
-        for i in self {
-            vec.push_back(self[i]);
-        }
-        self.pop(self[0]);
+        
     }
     // analyze all buffered strings and clear the buffer
     pub fn analyze_all (&mut self) -> Result<Vec<Token>, LexerError> {
-        for i in self {
-            vec.push_back(self[i]);
+        let mut vec = Vec::new();
+        if !self.Lexer.size(){
+            for i in self {
+                Vec.push_back(self[i]);
+            }
+        } else {
+            return LexerIsEmpty;
         }
-        self.clear();
+        self.Lexer.clear();
     }
 
     // returns size of the character buffer
     pub fn buffer_size(&self) -> usize {
-        self.size()
+        self.Lexer.size()
     }
 }
 
