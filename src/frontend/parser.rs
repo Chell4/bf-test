@@ -25,7 +25,7 @@ pub struct Parser {
 
 // parser error
 pub enum ParsingError {
-    //todo
+    OutOfArray: "Pointer is out of array size"
 }
 
 impl fmt::Debug for ParsingError {
@@ -37,27 +37,35 @@ impl fmt::Debug for ParsingError {
 impl Parser {
     // new parser
     pub fn new() -> Parser {
-        todo!()
+        Parser{
+            token_buffer: VecDeque<Token>::new();
+        }
     }
 
     // clear parser buffer
     pub fn clear(&mut self) {
-        self.clear();
+        self.Parser.clear();
     }
 
     // push single token
     pub fn push_token(&mut self, token: &Token) {
-        self.push_token(token);
+        self.Parser.push_back(token);
     }
     // push the slice of the tokens
     //???
     pub fn push_tokens(&mut self, tokens: &[Token]) {
-        self.push_tokens(tokens);
+        for i in self.Parser{
+            self.Parser.push_back(tokens[i]);
+        }
     }
 
     // try to parse operation from oldest tokens
     pub fn parse_next_op(&mut self) -> Result<Operation, ParsingError> {
-        todo!()
+        for i in self.Parser {
+            if self.Parser[i] in Operation {
+
+            }
+        }
     }
     // try to parse entire buffer or return first error
     pub fn parse_all(&mut self) -> Result<Vec<Operation>, ParsingError> {
@@ -70,14 +78,6 @@ impl Parser {
 
     // return number of tokens in the buffer
     pub fn buffer_size(&self) -> usize {
-        self.size()
+        self.Parser.size()
     }
 }
-
-//??????????
-//self
-//tokens
-//error!!!
-//impl
-//idi nahuy
-// GOYDAAAAAAA
