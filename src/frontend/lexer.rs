@@ -45,24 +45,34 @@ impl Lexer {
 
     // analyze and pop oldest pushed string
     pub fn analyze_next(&mut self) -> Result<Vec<Token>, LexerError> {
-        
+        self.Lexer.str_buffer.pop_front();
+        let mut vec = Vec::new();
+        if self.Lexer.size(){
+            for i in self {
+                Vec.push_back(self[i]);
+            }
+            Result::Ok(Vec)
+        } else {
+            Result::Err(LexerIsEmpty)
+        }
     }
     // analyze all buffered strings and clear the buffer
     pub fn analyze_all (&mut self) -> Result<Vec<Token>, LexerError> {
         let mut vec = Vec::new();
-        if !self.Lexer.size(){
+        if self.Lexer.size(){
             for i in self {
                 Vec.push_back(self[i]);
             }
+            Result::Ok(Vec)
         } else {
-            return LexerIsEmpty;
+            Result::Err(LexerIsEmpty)
         }
         self.Lexer.clear();
     }
 
     // returns size of the character buffer
     pub fn buffer_size(&self) -> usize {
-        self.Lexer.size()
+        self.Lexer.str_buffer.size()
     }
 }
 
@@ -73,4 +83,5 @@ pub fn pre_process(source: String) -> String {
             source.pop(source[i]);
         } 
     }
+    source
 }
