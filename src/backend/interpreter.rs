@@ -20,22 +20,30 @@ pub struct Interpreter {
 
 // error in runtime interpreter error
 pub enum InterpreterError {
-    //todo
+    
 }
 
 impl Interpreter {
     // new interpreter constructor
     pub fn new() -> Interpreter {
-        todo!()
+        Interpreter {
+            runtime: Runtime{
+                tape: Vec<Cell>::new(),
+                ptr: usize::new(),
+            }
+            ops_buffer: VecDeque<Operation>::new(),
+        }
     }
     
     // append new operation to the buffer 
     pub fn push_op(&mut self, op: &Operation) {
-        todo!()
+        self.ops_buffer.push_back(&op);
     }
     // append operations to the buffer
     pub fn push_ops(&mut self, ops: &Vec<Operation>) {
-        todo!()
+        for i in ops {
+            self.ops_buffer.push_back(ops[i]);
+        }
     }
     
     // execute and pop the first operation in the buffer
@@ -49,16 +57,34 @@ impl Interpreter {
 
     // pop last n (or less if not possible) pushed operations
     pub fn pop_buffer(&mut self, n: usize) {
-        todo!()
+        if (self.ops_buffer.len() <= n) {
+            self.ops_buffer.clear();
+        } else {
+            for i in &self.ops_buffer {
+                self.ops_buffer.pop_back();
+            }
+        }
     }
     
     // return number of buffered operations
     pub fn buffer_size(&self) -> usize {
-        todo!()
+        self.ops_buffer.len()
     }
 }
 
 // just interpret given vector of operations
 pub fn interpret(ops: Vec<Operation>) -> Option<InterpreterError> {
-    todo!()
+    
+    for i in &ops {
+        match ops[i] {
+            NoOp => ;
+            Add => self.runtime.tape[ptr] += 1;
+            Sub => self.runtime.tape[ptr] += 1;
+            MoveLeft => ptr -= 1;
+            MoveRight => ptr += 1;
+            Input => ;
+            Print => ;
+            Loop => ;
+        }
+    }
 }
