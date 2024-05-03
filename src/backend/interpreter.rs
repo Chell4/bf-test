@@ -28,21 +28,21 @@ impl Interpreter {
     pub fn new() -> Interpreter {
         Interpreter {
             runtime: Runtime{
-                tape: Vec<Cell>::new(),
-                ptr: usize::new(),
-            }
-            ops_buffer: VecDeque<Operation>::new(),
+                tape: Vec::new(),
+                ptr: 0,
+            },
+            ops_buffer: VecDeque::new(),
         }
     }
     
     // append new operation to the buffer 
-    pub fn push_op(&mut self, op: &Operation) {
-        self.ops_buffer.push_back(&op);
+    pub fn push_op(&mut self, op: Operation) {
+        self.ops_buffer.push_back(op);
     }
     // append operations to the buffer
-    pub fn push_ops(&mut self, ops: &Vec<Operation>) {
+    pub fn push_ops(&mut self, ops: Vec<Operation>) {
         for i in ops {
-            self.ops_buffer.push_back(ops[i]);
+            self.ops_buffer.push_back(i);
         }
     }
     
@@ -73,9 +73,9 @@ impl Interpreter {
 }
 
 // just interpret given vector of operations
-pub fn interpret(ops: Vec<Operation>) -> Option<InterpreterError> {
+pub fn interpret(ops: &Vec<Operation>) -> Option<InterpreterError> {
     
-    for i in &ops {
+    for i in ops {
         match ops[i] {
             NoOp => ;
             Add => self.runtime.tape[ptr] += 1;
