@@ -1,5 +1,5 @@
 
-use crate::frontend::Operation;
+use crate::{backend::interpreter, frontend::Operation};
 
 use std::collections::VecDeque;
 
@@ -27,12 +27,13 @@ impl Interpreter {
     // new interpreter constructor
     pub fn new() -> Interpreter {
         Interpreter {
-            runtime: Runtime{
+            runtime: Runtime {
                 tape: Vec::new(),
                 ptr: 0,
             },
             ops_buffer: VecDeque::new(),
         }
+        
     }
     
     // append new operation to the buffer 
@@ -74,17 +75,6 @@ impl Interpreter {
 
 // just interpret given vector of operations
 pub fn interpret(ops: &Vec<Operation>) -> Option<InterpreterError> {
-    
-    for i in ops {
-        match ops[i] {
-            NoOp => ;
-            Add => self.runtime.tape[ptr] += 1;
-            Sub => self.runtime.tape[ptr] += 1;
-            MoveLeft => ptr -= 1;
-            MoveRight => ptr += 1;
-            Input => ;
-            Print => ;
-            Loop => ;
-        }
-    }
+    let interpreter = Interpreter::new();
+    todo!()
 }
