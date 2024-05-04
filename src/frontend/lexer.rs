@@ -11,14 +11,31 @@ pub enum Token {
     CloseBracket,
 }
 
+impl Token {
+    pub fn from(c: char) -> Option<Self> {
+        match c {
+            '+' => Some(Token::Plus),
+            '-' => Some(Token::Minus),
+            '[' => Some(Token::OpenBracket),
+            ']' => Some(Token::CloseBracket),
+            '.' => Some(Token::Point),
+            ',' => Some(Token::Comma),
+            '<' => Some(Token::LeftArrow),
+            '>' => Some(Token::RightArrow),
+
+            _ => None,
+        }
+    }
+}
+
 // lexical analyzer
 pub struct Lexer {
     str_buffer: VecDeque<String>
 }
 
 pub enum LexerError {
-    //LexerIsEmpty: "Can't analyze and clear empty buffer"
-
+    LexerIsEmpty,
+    WrongCharacter,
 }
 
 impl Lexer {
@@ -45,44 +62,31 @@ impl Lexer {
 
     // analyze and pop oldest pushed string
     pub fn analyze_next(&mut self) -> Result<Vec<Token>, LexerError> {
-        self.str_buffer.pop_front();
-        let mut vec = Vec::new();
-        if self.str_buffer.len() != 0{
-            for i in self {
-                vec.push(self.str_buffer[i]);
-            }
-            Result::Ok(vec)
-        } else {
-            Result::Err(LexerIsEmpty)
+        match self.str_buffer.pop_front() {
+            None => Err(LexerError::LexerIsEmpty),
+            Some(s) => {
+                Ok(s.chars().map(|c| String::from("+-<>[].,").contains(*c)))
+            },
         }
     }
+
     // analyze all buffered strings and clear the buffer
     pub fn analyze_all (&mut self) -> Result<Vec<Token>, LexerError> {
-        let mut vec = Vec::new();
-        if self.str_buffer.len() != 0{
-            for i in self {
-                vec.push(self[i]);
-            }
-            Result::Ok(vec)
-        } else {
-            Result::Err(LexerIsEmpty)
+        for i in self.str_buffer {
+            self.analyze_next(i)
         }
-        self.str_buffer.clear();
     }
 
     // returns size of the character buffer
     pub fn buffer_size(&self) -> usize {
         self.str_buffer.len()
     }
+}
 
 
 // removes all characters except allowed
 pub fn pre_process(source: String) -> String {
-    for i in source {
-        if ((source[i] != "+") & (source[i] != "-") & (source[i] != ">") & (source[i] != "<") & (source[i] != "[") & (source[i] != "]") & (source[i] != ".") & (source[i] != ",")) {
-            source.remove(source[i]);
-        } 
-    }
-    source
-}
+    source.chars()
+        .filter(|c| String::from("+-<>[].,").contains(*c))
+        .collect()
 }
