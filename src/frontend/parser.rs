@@ -54,8 +54,8 @@ impl Parser {
 
     // push the slice of the tokens
     pub fn push_tokens(&mut self, tokens: &[Token]) {
-        for i in self.token_buffer{
-            self.token_buffer.push_back(i);
+        for i in tokens{
+            self.token_buffer.push_back(*i);
         }
     }
 
