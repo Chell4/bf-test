@@ -1,5 +1,7 @@
 use std::collections::VecDeque;
 
+#[derive(Clone)]
+#[derive(Copy)]
 pub enum Token {
     Plus,
     Minus,
@@ -62,19 +64,24 @@ impl Lexer {
 
     // analyze and pop oldest pushed string
     pub fn analyze_next(&mut self) -> Result<Vec<Token>, LexerError> {
+        let mut res_vec = Vec::new();
         match self.str_buffer.pop_front() {
             None => Err(LexerError::LexerIsEmpty),
             Some(s) => {
-                Ok(s.chars().map(|c| String::from("+-<>[].,").contains(*c)))
+                for i in s.chars().map(|c| Token::from(c)) {
+                    match i {
+                        Some(token) => res_vec.push(token),
+                        None => return Err(LexerError::WrongCharacter),
+                    }
+                }
+                Ok(res_vec)
             },
         }
     }
 
     // analyze all buffered strings and clear the buffer
     pub fn analyze_all (&mut self) -> Result<Vec<Token>, LexerError> {
-        for i in self.str_buffer {
-            self.analyze_next(i)
-        }
+        todo!();
     }
 
     // returns size of the character buffer
