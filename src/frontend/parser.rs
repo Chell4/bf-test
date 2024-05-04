@@ -25,7 +25,7 @@ pub struct Parser {
 
 // parser error
 pub enum ParsingError {
-    
+    ParserIsEmpty
 }
 
 impl fmt::Debug for ParsingError {
@@ -38,7 +38,7 @@ impl Parser {
     // new parser
     pub fn new() -> Parser {
         Parser{
-            token_buffer: VecDeque<Token>::new(),
+            token_buffer: VecDeque::new(),
         }
     }
 
@@ -49,22 +49,32 @@ impl Parser {
 
     // push single token
     pub fn push_token(&mut self, token: &Token) {
-        self.token_buffer.push_back(token);
+        self.token_buffer.push_back(*token);
     }
 
     // push the slice of the tokens
     pub fn push_tokens(&mut self, tokens: &[Token]) {
         for i in self.token_buffer{
-            self.token_buffer.push_back(tokens[i]);
+            self.token_buffer.push_back(i);
         }
     }
 
     // try to parse operation from oldest tokens
     pub fn parse_next_op(&mut self) -> Result<Operation, ParsingError> {
-        for i in self.token_buffer {
-            if self.token_buffer[i] in Operation {
-                
-            }
+        match self.token_buffer.back() {
+            None => Err(ParsingError::ParserIsEmpty),
+            Some(s) => {
+                match s {
+                    Token::Plus => Ok(Operation::Add),
+                    Token::Minus => Ok(Operation::Sub),
+                    Token::LeftArrow => Ok(Operation::MoveLeft),
+                    Token::RightArrow => Ok(Operation::MoveRight),
+                    Token::Point => Ok(Operation::Input),
+                    Token::Comma => Ok(Operation::Print),
+                    Token::OpenBracket => Ok(Operation::Add),
+                    Token::CloseBracket => Ok(Operation::Add),
+                }
+            },
         }
     }
     // try to parse entire buffer or return first error
