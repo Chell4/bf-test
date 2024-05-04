@@ -58,13 +58,15 @@ impl Interpreter {
 
     // pop last n (or less if not possible) pushed operations
     pub fn pop_buffer(&mut self, n: usize) {
+        {
         if (self.ops_buffer.len() <= n) {
             self.ops_buffer.clear();
         } else {
-            for i in &self.ops_buffer {
+            for _ in 0..n {
                 self.ops_buffer.pop_back();
             }
         }
+    }
     }
     
     // return number of buffered operations
@@ -72,6 +74,7 @@ impl Interpreter {
         self.ops_buffer.len()
     }
 }
+
 
 // just interpret given vector of operations
 pub fn interpret(ops: &Vec<Operation>) -> Option<InterpreterError> {
