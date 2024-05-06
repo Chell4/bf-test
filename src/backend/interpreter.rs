@@ -1,4 +1,3 @@
-
 use crate::{backend::interpreter, frontend::Operation};
 
 use std::collections::VecDeque;
@@ -20,7 +19,7 @@ pub struct Interpreter {
 
 // error in runtime interpreter error
 pub enum InterpreterError {
-    
+    InfiniteLoop,
 }
 
 impl Interpreter {
@@ -33,9 +32,9 @@ impl Interpreter {
             },
             ops_buffer: VecDeque::new(),
         }
-        
+
     }
-    
+
     // append new operation to the buffer 
     pub fn push_op(&mut self, op: Operation) {
         self.ops_buffer.push_back(op);
@@ -46,29 +45,40 @@ impl Interpreter {
             self.ops_buffer.push_back(i);
         }
     }
-    
+
     // execute and pop the first operation in the buffer
     pub fn execute_next(&mut self) -> Option<InterpreterError> {
-        todo!()
+        let input;
+        match self.ops_buffer.pop_front() {
+            Operation::Add => self.runtime.tape[self.runtime.ptr] += 1,
+            Operation::Sub => self.runtime.tape[self.runtime.ptr] -= 1,
+            Operation::MoveLeft => self.runtime.ptr -= 1,
+            Operation::MoveRight => self.runtime.ptr += 1,
+            Operation::Input => self.runtime.tape[ptr] = input,
+            Operation::Print => println!(self.runtime.tape[ptr]),
+            Operation::Loop => ,
+        }
     }
     // execute all operations and clear the buffer
     pub fn execute_all(&mut self) -> Option<InterpreterError> {
-        todo!()
+        for i in self.ops_buffer() {
+            execute_next();
+        }
     }
 
     // pop last n (or less if not possible) pushed operations
     pub fn pop_buffer(&mut self, n: usize) {
         {
-        if (self.ops_buffer.len() <= n) {
-            self.ops_buffer.clear();
-        } else {
-            for _ in 0..n {
-                self.ops_buffer.pop_back();
+            if (self.ops_buffer.len() <= n) {
+                self.ops_buffer.clear();
+            } else {
+                for _ in 0..n {
+                    self.ops_buffer.pop_back();
+                }
             }
         }
     }
-    }
-    
+
     // return number of buffered operations
     pub fn buffer_size(&self) -> usize {
         self.ops_buffer.len()
@@ -79,5 +89,6 @@ impl Interpreter {
 // just interpret given vector of operations
 pub fn interpret(ops: &Vec<Operation>) -> Option<InterpreterError> {
     let interpreter = Interpreter::new();
-    todo!()
+    push_ops(ops);
+    execute_all();
 }
