@@ -93,6 +93,7 @@ impl Lexer {
 
 // removes all characters except allowed
 pub fn pre_process(source: String) -> String {
+    //let mut parentheses_checker = VecDeque<char>::new();
     source.chars()
         .filter(|c| String::from("+-<>[].,").contains(*c))
         .collect()
