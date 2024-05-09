@@ -38,6 +38,8 @@ pub struct Lexer {
 pub enum LexerError {
     LexerIsEmpty,
     WrongCharacter,
+    ExpectedOpenBracket,
+    ExpectedClosedBracket,
 }
 
 impl Lexer {
@@ -93,8 +95,23 @@ impl Lexer {
 
 // removes all characters except allowed
 pub fn pre_process(source: String) -> String {
-    //let mut parentheses_checker = VecDeque<char>::new();
+    let parentheses_checker: VecDeque<char> = VecDeque::new();
     source.chars()
         .filter(|c| String::from("+-<>[].,").contains(*c))
-        .collect()
+        .collect(),
+
+    for i in source {
+        match i {
+            '[' => parentheses_checker.push_front(i),
+            ']' => match parentheses_checker.pop_front() {
+                None => Some(LexerError::ExpectedOpenBracket),
+                Some => None,
+            }
+        }
+    }
+
+    match parentheses_checker.pop_front() {
+        None => None,
+        Some => Some(LexerError::ExpectedClosedBracket),
+    }
 }
