@@ -1,7 +1,10 @@
 use std::collections::VecDeque;
+use std::fmt;
 
 #[derive(Clone)]
 #[derive(Copy)]
+#[derive(PartialEq)]
+
 pub enum Token {
     Plus,
     Minus,
@@ -35,11 +38,21 @@ pub struct Lexer {
     str_buffer: VecDeque<String>
 }
 
+#[derive(PartialEq)]
+
 pub enum LexerError {
     LexerIsEmpty,
     WrongCharacter,
-    ExpectedOpenBracket,
-    ExpectedClosedBracket,
+}
+
+impl fmt::Debug for LexerError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // informative debug error message
+        match *self {
+            LexerError::LexerIsEmpty => write!(f, "The operation buffer is empty."),
+            LexerError::WrongCharacter => write!(f, "Cannot recognize this operation."),
+        }
+    }
 }
 
 impl Lexer {
@@ -83,7 +96,17 @@ impl Lexer {
 
     // analyze all buffered strings and clear the buffer
     pub fn analyze_all (&mut self) -> Result<Vec<Token>, LexerError> {
-        todo!();
+        let mut res_vec = Vec::new();
+        loop {
+            match self.analyze_next() {
+                Ok(tokens) => res_vec.append(&mut tokens),
+                Err(err) => if err == LexerError::LexerIsEmpty {
+                        break Ok(res_vec);
+                    } else {
+                        break Err(err);
+                    }
+            }
+        }
     }
 
     // returns size of the character buffer
@@ -98,20 +121,5 @@ pub fn pre_process(source: String) -> String {
     let parentheses_checker: VecDeque<char> = VecDeque::new();
     source.chars()
         .filter(|c| String::from("+-<>[].,").contains(*c))
-        .collect(),
-
-    for i in source {
-        match i {
-            '[' => parentheses_checker.push_front(i),
-            ']' => match parentheses_checker.pop_front() {
-                None => Some(LexerError::ExpectedOpenBracket),
-                Some => None,
-            }
-        }
-    }
-
-    match parentheses_checker.pop_front() {
-        None => None,
-        Some => Some(LexerError::ExpectedClosedBracket),
-    }
+        .collect()
 }
