@@ -25,14 +25,16 @@ pub struct Parser {
 
 // parser error
 pub enum ParsingError {
-    ParserIsEmpty
+    ParserIsEmpty,
+    MismatchedBracket,
 }
 
 impl fmt::Debug for ParsingError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // informative debug error message
-        match fmt::Formatter {
-            ParsingError::ParserIsEmpty => "You trying to interact with empty buffer",
+        match self {
+            ParsingError::ParserIsEmpty => write!(f, "The parser buffer is empty."),
+            ParsingError::MismatchedBracket => write!(f, "Cannot find a matching bracket."),
         }
     }
 }
@@ -64,41 +66,53 @@ impl Parser {
 
     // try to parse operation from oldest tokens
     pub fn parse_next_op(&mut self) -> Result<Operation, ParsingError> {
-        let mut vec = Vec::new();
-        match self.token_buffer.back() {
-            None => Err(ParsingError::ParserIsEmpty),
-            Some(s) => {
-                match s {
-                    Token::Plus => Ok(Operation::Add),
-                    Token::Minus => Ok(Operation::Sub),
-                    Token::LeftArrow => Ok(Operation::MoveLeft),
-                    Token::RightArrow => Ok(Operation::MoveRight),
-                    Token::Point => Ok(Operation::Input),
-                    Token::Comma => Ok(Operation::Print),
-                    Token::OpenBracket => for i in self.token_buffer {
-                        vec.push(parse_next_op());
-                    },
-                    Token::CloseBracket => ,
-                }
-            }
+        let mut flag = false;
+        match self.parse_until(|_| {
+            let tmp = flag;
+            flag = true;
+            tmp
+        }) {
+            Ok(vec_ops) => Ok(vec_ops[0]),
+            Err(err) => Err(err),
         }
     }
+
     // try to parse entire buffer or return first error
     pub fn parse_all(&mut self) -> Result<Vec<Operation>, ParsingError> {
-        let mut vec = Vec::new();
-        for i in self.token_buffer {
-            vec.push(parse_next_op());
-        }
-        Ok(vec)
+        self.parse_until(|_| false)
     }
+
     // parse until the predicate return true
     pub fn parse_until(&mut self, mut f: impl FnMut(&Token) -> bool) -> Result<Vec<Operation>, ParsingError> {
         let mut vec = Vec::new();
-        while true == true  {
-            vec.push(parse_next_op());
+        while let Some(token) = self.token_buffer.pop_front() {
+            if f(&token) {
+                self.token_buffer.push_front(token);
+                return Ok(vec);
+            }
+            match token {
+                Token::Plus => vec.push(Operation::Add),
+                Token::Minus => vec.push(Operation::Sub),
+                Token::LeftArrow => vec.push(Operation::MoveLeft),
+                Token::RightArrow => vec.push(Operation::MoveRight),
+                Token::Point => vec.push(Operation::Input),
+                Token::Comma => vec.push(Operation::Print),
+                Token::OpenBracket => match self.parse_until(|t| *t == Token::CloseBracket) {
+                    Ok(loop_ops) => {
+                        if self.token_buffer.pop_front() != Some(Token::CloseBracket) {
+                            return Err(ParsingError::MismatchedBracket);
+                        }
+                        vec.push(Operation::Loop(loop_ops));
+                        
+                    },
+                    Err(err) => return Err(err),
+                },
+                Token::CloseBracket => return Err(ParsingError::MismatchedBracket),
+            }
         }
         Ok(vec)
     }
+
 
     // return number of tokens in the buffer
     pub fn buffer_size(&self) -> usize {
