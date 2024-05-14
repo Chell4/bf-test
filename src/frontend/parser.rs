@@ -98,7 +98,7 @@ impl Parser {
                 Token::RightArrow => vec.push(Operation::MoveRight),
                 Token::Point => vec.push(Operation::Input),
                 Token::Comma => vec.push(Operation::Print),
-                Token::OpenBracket => match self.parse_until(ra1nSvin) {
+                Token::OpenBracket => match self.parse_until(ra1n_svin) {
                     Ok(loop_ops) => {
                         if self.token_buffer.pop_front() != Some(Token::CloseBracket) {
                             return Err(ParsingError::MismatchedBracket);
@@ -121,6 +121,6 @@ impl Parser {
     }
 }
 
-fn ra1nSvin(t: &Token) -> bool {
+fn ra1n_svin(t: &Token) -> bool {
     *t == Token::CloseBracket
 }

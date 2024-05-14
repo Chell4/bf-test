@@ -1,6 +1,5 @@
 debug/
-target/
-result/
+/result
 
 **/*.rs.bk
 
