@@ -1,4 +1,4 @@
-use crate::{backend::interpreter, frontend::Operation};
+use crate::frontend::Operation;
 
 use std:: {
     collections::VecDeque,
@@ -28,7 +28,7 @@ pub enum InterpreterError {
     IOError(io::Error),
 }
 
-impl fmt::Debug for InterpreterError {
+impl fmt::Display for InterpreterError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // informative debug error message
         match self {
@@ -85,11 +85,7 @@ impl Interpreter {
                 },
                 Operation::Input => {
                     let mut buf = Vec::new();
-                    let mut input: usize;
-                    let mut c = io::stdin()
-                        .read_exact(&mut buf);
-
-                    match c {
+                    match io::stdin().read_exact(&mut buf){
                         Err(err) => return Some(InterpreterError::IOError(err)),
                         Ok(_) => (),
                     }
@@ -136,7 +132,7 @@ impl Interpreter {
     // pop last n (or less if not possible) pushed operations
     pub fn pop_buffer(&mut self, n: usize) {
         {
-            if (self.ops_buffer.len() <= n) {
+            if self.ops_buffer.len() <= n {
                 self.ops_buffer.clear();
             } else {
                 for _ in 0..n {
@@ -159,3 +155,4 @@ pub fn interpret(ops: &Vec<Operation>) -> Option<InterpreterError> {
     interpreter.push_ops(ops.clone());
     interpreter.execute_all()
 }
+

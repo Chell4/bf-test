@@ -6,6 +6,14 @@ use std::{
 #[derive(Clone)]
 #[derive(Copy)]
 #[derive(PartialEq)]
+use std::{
+    collections::VecDeque,
+    fmt,
+};
+
+#[derive(Clone)]
+#[derive(Copy)]
+#[derive(PartialEq)]
 
 pub enum Token {
     Plus,
@@ -16,6 +24,23 @@ pub enum Token {
     Comma,
     OpenBracket,
     CloseBracket,
+}
+
+impl Token {
+    pub fn from(c: char) -> Option<Self> {
+        match c {
+            '+' => Some(Token::Plus),
+            '-' => Some(Token::Minus),
+            '[' => Some(Token::OpenBracket),
+            ']' => Some(Token::CloseBracket),
+            '.' => Some(Token::Point),
+            ',' => Some(Token::Comma),
+            '<' => Some(Token::LeftArrow),
+            '>' => Some(Token::RightArrow),
+
+            _ => None,
+        }
+    }
 }
 
 impl Token {
@@ -47,10 +72,10 @@ pub enum LexerError {
     WrongCharacter,
 }
 
-impl fmt::Debug for LexerError {
+impl fmt::Display for LexerError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // informative debug error message
-        match *self {
+        match self {
             LexerError::LexerIsEmpty => write!(f, "The operation buffer is empty."),
             LexerError::WrongCharacter => write!(f, "Cannot recognize this operation."),
         }
