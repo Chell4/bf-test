@@ -1,4 +1,11 @@
-use std::collections::VecDeque;
+use std::{
+    collections::VecDeque,
+    fmt,
+};
+
+#[derive(Clone)]
+#[derive(Copy)]
+#[derive(PartialEq)]
 
 pub enum Token {
     Plus,
@@ -11,14 +18,43 @@ pub enum Token {
     CloseBracket,
 }
 
+impl Token {
+    pub fn from(c: char) -> Option<Self> {
+        match c {
+            '+' => Some(Token::Plus),
+            '-' => Some(Token::Minus),
+            '[' => Some(Token::OpenBracket),
+            ']' => Some(Token::CloseBracket),
+            '.' => Some(Token::Point),
+            ',' => Some(Token::Comma),
+            '<' => Some(Token::LeftArrow),
+            '>' => Some(Token::RightArrow),
+
+            _ => None,
+        }
+    }
+}
+
 // lexical analyzer
 pub struct Lexer {
     str_buffer: VecDeque<String>
 }
 
-pub enum LexerError {
-    // todo
+#[derive(PartialEq)]
 
+pub enum LexerError {
+    LexerIsEmpty,
+    WrongCharacter,
+}
+
+impl fmt::Debug for LexerError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // informative debug error message
+        match *self {
+            LexerError::LexerIsEmpty => write!(f, "The operation buffer is empty."),
+            LexerError::WrongCharacter => write!(f, "Cannot recognize this operation."),
+        }
+    }
 }
 
 impl Lexer {
@@ -40,35 +76,51 @@ impl Lexer {
     }
     // pop last pushed string
     pub fn pop_str(&mut self) {
-        self.pop_back(); //11.04
+        self.str_buffer.pop_back();
     }
 
     // analyze and pop oldest pushed string
     pub fn analyze_next(&mut self) -> Result<Vec<Token>, LexerError> {
-        for i in self {
-            vec.push_back(self[i]);
+        let mut res_vec = Vec::new();
+        match self.str_buffer.pop_front() {
+            None => Err(LexerError::LexerIsEmpty),
+            Some(s) => {
+                for i in s.chars().map(|c| Token::from(c)) {
+                    match i {
+                        Some(token) => res_vec.push(token),
+                        None => return Err(LexerError::WrongCharacter),
+                    }
+                }
+                Ok(res_vec)
+            },
         }
-        self.pop(self[0]);
     }
+
     // analyze all buffered strings and clear the buffer
     pub fn analyze_all (&mut self) -> Result<Vec<Token>, LexerError> {
-        for i in self {
-            vec.push_back(self[i]);
+        let mut res_vec = Vec::new();
+        loop {
+            match self.analyze_next() {
+                Ok(mut tokens) => res_vec.append(&mut tokens),
+                Err(err) => if err == LexerError::LexerIsEmpty {
+                        break Ok(res_vec);
+                    } else {
+                        break Err(err);
+                    }
+            }
         }
-        self.clear();
     }
 
     // returns size of the character buffer
     pub fn buffer_size(&self) -> usize {
-        self.size()
+        self.str_buffer.len()
     }
 }
 
+
 // removes all characters except allowed
 pub fn pre_process(source: String) -> String {
-    for i in source {
-        if ((source[i] != "+") & (source[i] != "-") & (source[i] != ">") & (source[i] != "<") & (source[i] != "[") & (source[i] != "]") & (source[i] != ".") & (source[i] != ",")) {
-            source.pop(source[i]);
-        } 
-    }
+    source.chars()
+        .filter(|c| String::from("+-<>[].,").contains(*c))
+        .collect()
 }

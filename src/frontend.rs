@@ -21,5 +21,12 @@ pub enum FrontendError {
 
 // source code (maybe with comments) to intermediate representation (operations) or error
 pub fn analyze(source: String) -> Result<Vec<Operation>, FrontendError> {
-    todo!()
+    match lexer::Lexer::analyze_all(lexer::Lexer::push_str(lexer::Lexer::pre_process(source))) {
+        Err(err) => Err(err),
+        Ok(vt) => match parser::Parser::parse_all(parser::Parser::push_tokens(vt)) {
+            Err(er) => Err(er),
+            Ok(an) => Ok(an),
+        },
+    }
+    
 }
