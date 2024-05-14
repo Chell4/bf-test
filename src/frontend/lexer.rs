@@ -47,10 +47,10 @@ pub enum LexerError {
     WrongCharacter,
 }
 
-impl fmt::Debug for LexerError {
+impl fmt::Display for LexerError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // informative debug error message
-        match *self {
+        match self {
             LexerError::LexerIsEmpty => write!(f, "The operation buffer is empty."),
             LexerError::WrongCharacter => write!(f, "Cannot recognize this operation."),
         }
@@ -120,7 +120,6 @@ impl Lexer {
 
 // removes all characters except allowed
 pub fn pre_process(source: String) -> String {
-    let parentheses_checker: VecDeque<char> = VecDeque::new();
     source.chars()
         .filter(|c| String::from("+-<>[].,").contains(*c))
         .collect()

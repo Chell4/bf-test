@@ -1,4 +1,3 @@
-use crate::frontend;
 use crate::frontend::Token;
 
 use std::{
@@ -31,7 +30,7 @@ pub enum ParsingError {
     MismatchedBracket,
 }
 
-impl fmt::Debug for ParsingError {
+impl fmt::Display for ParsingError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // informative debug error message
         match self {
