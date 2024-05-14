@@ -1,8 +1,11 @@
-use std::io;
-
 use crate::{backend::interpreter, frontend::Operation};
 
-use std::collections::VecDeque;
+use std:: {
+    collections::VecDeque,
+    fmt,
+    io,
+    io::Read
+};
 
 
 type Cell = u8;
@@ -21,8 +24,18 @@ pub struct Interpreter {
 
 // error in runtime interpreter error
 pub enum InterpreterError {
-    InfiniteLoop,
     EmptyBuffer,
+    IOError(io::Error),
+}
+
+impl fmt::Debug for InterpreterError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // informative debug error message
+        match self {
+            InterpreterError::EmptyBuffer => write!(f, "The operation buffer is empty."),
+            InterpreterError::IOError(err) => write!(f, "IOError: {err}"),
+        }
+    }
 }
 
 impl Interpreter {
@@ -30,7 +43,7 @@ impl Interpreter {
     pub fn new() -> Interpreter {
         Interpreter {
             runtime: Runtime {
-                tape: Vec::new(),
+                tape: Vec::from([0;30000]),
                 ptr: 0,
             },
             ops_buffer: VecDeque::new(),
@@ -71,30 +84,53 @@ impl Interpreter {
                     None
                 },
                 Operation::Input => {
-                    let mut input;
-                    io::stdin()
-                        .read_line(&mut input)
-                        .expect("Failed to read line");
+                    let mut buf = Vec::new();
+                    let mut input: usize;
+                    let mut c = io::stdin()
+                        .read_exact(&mut buf);
 
-                    self.runtime.tape[self.runtime.ptr] = input;
+                    match c {
+                        Err(err) => return Some(InterpreterError::IOError(err)),
+                        Ok(_) => (),
+                    }
+                    self.runtime.tape[self.runtime.ptr] = buf[0];
                     None
                 },
                 Operation::Print => {
-                    print!("{}", self.runtime.tape[self.runtime.ptr]);
+                    print!("{}", self.runtime.tape[self.runtime.ptr] as char);
                     None
                 },
-                Operation::Loop => {
+                Operation::Loop(vec_ops) => {
+                    let mut interpreter = Interpreter::new();
+                    let mut runtime_buf = Runtime{
+                        tape: Vec::new(),
+                        ptr: 0,
+                    };
+                    std::mem::swap(&mut runtime_buf, &mut self.runtime);
+                    interpreter.runtime = runtime_buf;
                     
+                    while interpreter.runtime.tape[interpreter.runtime.ptr] != 0 {
+                        interpreter.push_ops(vec_ops.clone());
+                        if let Some(err) = interpreter.execute_all() {
+                            return Some(err)
+                        }
+                    }
+                    self.runtime = interpreter.runtime;
+                    None
                 },
+                Operation::NoOp => None,
             },
         }
     }
 
     // execute all operations and clear the buffer
     pub fn execute_all(&mut self) -> Option<InterpreterError> {
-        for i in self.ops_buffer() {
-            execute_next();
+        while self.buffer_size() > 0 {
+            if let Some(err) = self.execute_next() {
+                return Some(err)
+            }
         }
+        None
     }
 
     // pop last n (or less if not possible) pushed operations
@@ -120,6 +156,7 @@ impl Interpreter {
 // just interpret given vector of operations
 pub fn interpret(ops: &Vec<Operation>) -> Option<InterpreterError> {
     let mut interpreter = Interpreter::new();
-    interpreter.push_ops(*ops);
+    interpreter.push_ops(ops.clone());
     interpreter.execute_all()
 }
+
