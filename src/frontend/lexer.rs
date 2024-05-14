@@ -1,5 +1,7 @@
-use std::collections::VecDeque;
-use std::fmt;
+use std::{
+    collections::VecDeque,
+    fmt,
+};
 
 #[derive(Clone)]
 #[derive(Copy)]
@@ -99,7 +101,7 @@ impl Lexer {
         let mut res_vec = Vec::new();
         loop {
             match self.analyze_next() {
-                Ok(tokens) => res_vec.append(&mut tokens),
+                Ok(mut tokens) => res_vec.append(&mut tokens),
                 Err(err) => if err == LexerError::LexerIsEmpty {
                         break Ok(res_vec);
                     } else {
