@@ -6,6 +6,8 @@ use std::{
     fmt,
 };
 
+#[derive(Clone)]
+
 // bf operation
 pub enum Operation {
     NoOp,
@@ -72,7 +74,7 @@ impl Parser {
             flag = true;
             tmp
         }) {
-            Ok(vec_ops) => Ok(vec_ops[0]),
+            Ok(vec_ops) => Ok(vec_ops[0].clone()),
             Err(err) => Err(err),
         }
     }
