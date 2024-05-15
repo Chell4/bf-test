@@ -96,8 +96,8 @@ impl Parser {
                 Token::Minus => vec.push(Operation::Sub),
                 Token::LeftArrow => vec.push(Operation::MoveLeft),
                 Token::RightArrow => vec.push(Operation::MoveRight),
-                Token::Point => vec.push(Operation::Input),
-                Token::Comma => vec.push(Operation::Print),
+                Token::Point => vec.push(Operation::Print),
+                Token::Comma => vec.push(Operation::Input),
                 Token::OpenBracket => match self.parse_until(ra1n_svin) {
                     Ok(loop_ops) => {
                         if self.token_buffer.pop_front() != Some(Token::CloseBracket) {

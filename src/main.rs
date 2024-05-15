@@ -1,14 +1,25 @@
-use std::io::{self};
+use std::io::{
+    self,
+    Write
+};
 
 use bf_test::{backend::{self}, frontend};
 
 fn main() {
+    let mut command_history = Vec::new();
     let mut interpreter = backend::Interpreter::new();
 
     loop {
-        print!(">>> ");
+        print!(">>>: ");
+
+        if let Err(err) = io::stdout().flush() {
+            println!("Cannot flush stdout: {err}");
+            interpreter = backend::Interpreter::new();
+            continue;
+        }
 
         let mut source = String::new();
+        command_history.push(source.clone());
         if let Err(err) = io::stdin().read_line(&mut source) {
             println!("Cannot read line: {err}",);
             interpreter = backend::Interpreter::new();

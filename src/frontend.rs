@@ -35,6 +35,7 @@ pub fn analyze(mut source: String) -> Result<Vec<Operation>, FrontendError> {
     let mut lexer = Lexer::new();
 
     source = pre_process(source);
+
     lexer.push_str(source);
     
     let mut parser = Parser::new();

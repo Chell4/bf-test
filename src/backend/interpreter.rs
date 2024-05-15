@@ -3,8 +3,11 @@ use crate::frontend::Operation;
 use std:: {
     collections::VecDeque,
     fmt,
-    io,
-    io::Read
+    io:: {
+        Read,
+        Write,
+        self,
+    }
 };
 
 
@@ -43,8 +46,8 @@ impl Interpreter {
     pub fn new() -> Interpreter {
         Interpreter {
             runtime: Runtime {
-                tape: Vec::from([0;30000]),
-                ptr: 0,
+                tape: Vec::from([0;300000]),
+                ptr: 150000,
             },
             ops_buffer: VecDeque::new(),
         }
@@ -84,7 +87,10 @@ impl Interpreter {
                     None
                 },
                 Operation::Input => {
-                    let mut buf = Vec::new();
+                    if let Err(err) = io::stdout().flush() {
+                        return Some(InterpreterError::IOError(err));
+                    }
+                    let mut buf = Vec::from([0;1]);
                     match io::stdin().read_exact(&mut buf){
                         Err(err) => return Some(InterpreterError::IOError(err)),
                         Ok(_) => (),
